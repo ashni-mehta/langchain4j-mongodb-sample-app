@@ -21,9 +21,9 @@ public class MongoDBEmbeddingStoreSample {
         // mongodb.start();
 
         MongoClient mongoClient = MongoClients.create("URI");
-        String databaseName = "sample_mflix";
-        String collectionName = "embedded_movies";
-        String indexName = "embedding_index2";
+        String databaseName = "sample-data";
+        String collectionName = "semantic-searching";
+        String indexName = "embedding";
         Long maxResultRatio = 10L;
         CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions();
         Bson filter = null;
@@ -48,10 +48,20 @@ public class MongoDBEmbeddingStoreSample {
         //  System.out.println(answer);
 
         EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
-        Embedding queryEmbedding = embeddingModel.embed("Find me a movie that takes place in Ancient Rome").content();
+
+        TextSegment segment1 = TextSegment.from("I like football.");
+        Embedding embedding1 = embeddingModel.embed(segment1).content();
+        embeddingStore.add(embedding1, segment1);
+
+        TextSegment segment2 = TextSegment.from("The weather is good today.");
+        Embedding embedding2 = embeddingModel.embed(segment2).content();
+        embeddingStore.add(embedding2, segment2);
+
+        Embedding queryEmbedding = embeddingModel.embed("What is your favourite sport?").content();
         List<EmbeddingMatch<TextSegment>> relevant = embeddingStore.findRelevant(queryEmbedding, 1);
         EmbeddingMatch<TextSegment> embeddingMatch = relevant.get(0);
-        System.out.println(embeddingMatch.score());
-        System.out.println(embeddingMatch.embedded().text());
+
+        System.out.println(embeddingMatch.score()); // 0.8144289255142212
+        System.out.println(embeddingMatch.embedded().text()); // I like football.
     }
 }
