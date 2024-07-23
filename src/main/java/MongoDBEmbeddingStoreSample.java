@@ -18,9 +18,6 @@ import java.util.List;
 
 public class MongoDBEmbeddingStoreSample {
     public static void main(String[] args) {
-        // MongoDBContainer mongodb = new MongoDBContainer("mongo:7.0.0");
-        // mongodb.start();
-
         MongoClient mongoClient = MongoClients.create("URI");
         String databaseName = "sample-data";
         String collectionName = "semantic-searching";
@@ -43,11 +40,6 @@ public class MongoDBEmbeddingStoreSample {
                 createIndex
         );
 
-        //  String apiKey = "demo";
-        //  OpenAiChatModel model = OpenAiChatModel.withApiKey(apiKey);
-        //  String answer = model.generate("What is MongoDB?");
-        //  System.out.println(answer);
-
         EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
 
         ArrayList<String> texts = new ArrayList<String>();
@@ -65,7 +57,7 @@ public class MongoDBEmbeddingStoreSample {
         List<EmbeddingMatch<TextSegment>> relevant = embeddingStore.findRelevant(queryEmbedding, 1);
         EmbeddingMatch<TextSegment> embeddingMatch = relevant.get(0);
 
-        System.out.println(embeddingMatch.score()); // 0.8144289255142212
-        System.out.println(embeddingMatch.embedded().text()); // I like football.
+        System.out.println(embeddingMatch.score());
+        System.out.println(embeddingMatch.embedded().text());
     }
 }
