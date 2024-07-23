@@ -13,6 +13,7 @@ import dev.langchain4j.store.embedding.mongodb.MongoDbEmbeddingStore;
 import org.bson.conversions.Bson;
 //import org.testcontainers.containers.MongoDBContainer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MongoDBEmbeddingStoreSample {
@@ -49,15 +50,18 @@ public class MongoDBEmbeddingStoreSample {
 
         EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
 
-        TextSegment segment1 = TextSegment.from("I like football.");
-        Embedding embedding1 = embeddingModel.embed(segment1).content();
-        embeddingStore.add(embedding1, segment1);
+        ArrayList<String> texts = new ArrayList<String>();
+        texts.add("The weather is pretty bad today.");
+        texts.add("Emperor penguins are the tallest and heaviest of all penguin species, standing up to 4 feet.");
+        texts.add("The word \"pomme\" (apple) was historically used to describe many round fruits, and when potatoes were introduced to Europe, they were named pommes de terre because they grow underground, distinguishing them from regular apples that grow on trees.");
 
-        TextSegment segment2 = TextSegment.from("The weather is good today.");
-        Embedding embedding2 = embeddingModel.embed(segment2).content();
-        embeddingStore.add(embedding2, segment2);
+        for (String text : texts) {
+            TextSegment segment = TextSegment.from(text);
+            Embedding embedding = embeddingModel.embed(segment).content();
+            embeddingStore.add(embedding, segment);
+        }
 
-        Embedding queryEmbedding = embeddingModel.embed("What is your favourite sport?").content();
+        Embedding queryEmbedding = embeddingModel.embed("What is a penguin?").content();
         List<EmbeddingMatch<TextSegment>> relevant = embeddingStore.findRelevant(queryEmbedding, 1);
         EmbeddingMatch<TextSegment> embeddingMatch = relevant.get(0);
 
